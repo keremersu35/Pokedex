@@ -6,6 +6,6 @@ import com.example.pokedex.domain.model.PokemonDetail
 import com.example.pokedex.utils.Resource
 
 abstract class PokemonRepository : BaseRepository(){
-    abstract suspend fun getPokemonList(limit: Int, offset: Int): Pokemon
+    abstract suspend fun getPokemonList(offset: Int): Resource<Pokemon>
     abstract suspend fun getPokemonDetail(id: Int): Resource<PokemonDetail>
 }

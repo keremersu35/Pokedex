@@ -12,9 +12,9 @@ interface PokemonApi {
 
     @GET("pokemon")
     suspend fun getPokemonList(
-        @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
-    ): Pokemon
+        @Query("offset") offset: Int = 0,
+        @Query("limit") limit: Int = 20
+        ): Response<Pokemon>
 
     @GET("pokemon/{id}")
     suspend fun getPokemonDetail(@Path("id") id: Int): Response<PokemonDetail>

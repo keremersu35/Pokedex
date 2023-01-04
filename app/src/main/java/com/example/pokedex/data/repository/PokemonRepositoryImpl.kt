@@ -11,8 +11,8 @@ class PokemonRepositoryImpl @Inject constructor(
     private val api: PokemonApi
 ): PokemonRepository() {
 
-    override suspend fun getPokemonList(limit: Int, offset: Int): Pokemon {
-        return api.getPokemonList(limit, offset)
+    override suspend fun getPokemonList(offset: Int): Resource<Pokemon> {
+        return safeApiCall { api.getPokemonList(offset = offset) }
     }
 
     override suspend fun getPokemonDetail(id: Int): Resource<PokemonDetail> {
