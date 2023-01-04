@@ -3,7 +3,7 @@ package com.example.pokedex.domain.use_case
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.model.PokemonDetail
 import com.example.pokedex.domain.repository.PokemonRepository
-import com.example.pokedex.utils.Response
+import com.example.pokedex.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -13,15 +13,15 @@ import javax.inject.Inject
 class GetPokemonListUseCase @Inject constructor(
     private val repository: PokemonRepository
 ){
-    operator fun invoke(limit: Int, offset: Int): Flow<Response<Pokemon>> = flow{
+    operator fun invoke(limit: Int, offset: Int): Flow<Resource<Pokemon>> = flow{
         try {
-            emit(Response.Loading<Pokemon>())
+            emit(Resource.Loading<Pokemon>())
             var pokemons = repository.getPokemonList(limit, offset)
-            emit(Response.Success<Pokemon>(data = pokemons.data!!))
+            emit(Resource.Success<Pokemon>(data = pokemons))
         }catch (e: HttpException){
-            emit(Response.Error<Pokemon>(e.localizedMessage ?: "An unexpected error occured"))
+            emit(Resource.Error<Pokemon>(e.localizedMessage ?: "An unexpected error occured"))
         }catch (e: IOException){
-            emit(Response.Error<Pokemon>("Couldn't reach server."))
+            emit(Resource.Error<Pokemon>("Couldn't reach server."))
         }
     }
 }

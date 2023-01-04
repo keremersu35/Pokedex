@@ -1,10 +1,11 @@
 package com.example.pokedex.domain.repository
 
+import com.example.pokedex.base.BaseRepository
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.model.PokemonDetail
-import com.example.pokedex.utils.Response
+import com.example.pokedex.utils.Resource
 
-interface PokemonRepository {
-    suspend fun getPokemonList(limit: Int, offset: Int): Response<Pokemon>
-    suspend fun getPokemonDetail(id: Int): Response<PokemonDetail>
+abstract class PokemonRepository : BaseRepository(){
+    abstract suspend fun getPokemonList(limit: Int, offset: Int): Pokemon
+    abstract suspend fun getPokemonDetail(id: Int): Resource<PokemonDetail>
 }
