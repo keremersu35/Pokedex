@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,10 +34,9 @@ class PokemonListFragment : Fragment() {
         val viewModel = ViewModelProvider(requireActivity())[PokemonListViewModel::class.java]
 
         lifecycleScope.launch {
-            viewModel.uiState.observe(viewLifecycleOwner, Observer {
-                val pokemons = it
-                binding.pokemonRv.adapter = PokemonListAdapter(it.data?.results ?: listOf())
-            })
+            viewModel.uiState.observe(viewLifecycleOwner) {
+                binding.pokemonRv.adapter = PokemonListAdapter(it.data?.results ?: emptyList())
+            }
         }
     }
 }
