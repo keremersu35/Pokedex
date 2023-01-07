@@ -14,8 +14,7 @@ import com.example.pokedex.domain.model.PokemonDetail
 import com.example.pokedex.domain.model.Result
 import javax.inject.Inject
 
-
-class PokemonListAdapter @Inject constructor() :
+class PokemonListAdapter :
     PagingDataAdapter<Result, PokemonViewHolder>(differCallback) {
 
     private lateinit var binding: ItemPokemonsRvBinding
@@ -27,20 +26,13 @@ class PokemonListAdapter @Inject constructor() :
 
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
         var pokemon = getItem(position)!!
-        holder.setIsRecyclable(false)
         holder.bind(pokemon)
-        binding.pokemonImage.load(pokemon.getImageUrl()){
-            crossfade(true)
-            placeholder(R.drawable.loading)
-            transformations(CircleCropTransformation())
-        }
     }
     companion object {
         val differCallback = object : DiffUtil.ItemCallback<Result>() {
             override fun areItemsTheSame(oldItem: Result, newItem: Result): Boolean {
                 return oldItem.getPokemonId() == oldItem.getPokemonId()
             }
-
             override fun areContentsTheSame(oldItem: Result, newItem: Result): Boolean {
                 return oldItem == newItem
             }

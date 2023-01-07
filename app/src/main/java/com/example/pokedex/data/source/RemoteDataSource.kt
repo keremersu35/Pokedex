@@ -2,13 +2,10 @@ package com.example.pokedex.data.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.pokedex.data.remote.PokemonApi
 import com.example.pokedex.domain.model.Result
 import com.example.pokedex.domain.repository.PokemonRepository
-import com.example.pokedex.utils.Resource
 import retrofit2.HttpException
 import java.io.IOException
-import javax.inject.Inject
 
 private const val TMDB_STARTING_PAGE_INDEX = 1
 
@@ -17,21 +14,18 @@ class RemotePagingSource(
 ) : PagingSource<Int, Result>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
-        val pageIndex = params.key ?: TMDB_STARTING_PAGE_INDEX
+        val currentPage = params.key ?: TMDB_STARTING_PAGE_INDEX
         return try {
             val response = repository.getPokemonList(
-                offset = pageIndex
+                offset = (currentPage * 20)
             )
             val data = response.data?.results ?: emptyList()
             val nextKey =
-                if (data.isEmpty()) {
-                    null
-                } else {
-                    pageIndex + (params.loadSize / 20)
-                }
+                if (data.isEmpty()) null
+                else  currentPage + 1
             LoadResult.Page(
                 data = data,
-                prevKey = if (pageIndex == TMDB_STARTING_PAGE_INDEX) null else pageIndex,
+                prevKey = if (currentPage == TMDB_STARTING_PAGE_INDEX) null else -1,
                 nextKey = nextKey
             )
         } catch (exception: IOException) {

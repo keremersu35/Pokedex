@@ -21,8 +21,7 @@ class PokemonListFragment : Fragment() {
     private var _binding: FragmentPokemonListBinding? = null
     private val binding get() = _binding!!
 
-    @Inject
-    lateinit var pokemonsAdapter: PokemonListAdapter
+    var pokemonsAdapter = PokemonListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +41,11 @@ class PokemonListFragment : Fragment() {
                 binding.pokemonRv.adapter = PokemonListAdapter(it ?: emptyList())
             }
         }*/
-        if (::pokemonsAdapter.isInitialized) {
-            lifecycleScope.launchWhenCreated {
-                viewModel.pokemonList.collect {
-                    pokemonsAdapter.submitData(it)
-                }
+        lifecycleScope.launchWhenCreated {
+            viewModel.pokemonList.collect {
+                pokemonsAdapter.submitData(lifecycle, it)
             }
+        }
 
 /*        moviesAdapter.setOnItemClickListener {
             val direction = MoviesFragmentDirections.actionMoviesFragmentToMovieDetailsFragment(it.id)
@@ -61,7 +59,6 @@ class PokemonListFragment : Fragment() {
                 }
             }
 
-
             binding.pokemonRv.apply {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = pokemonsAdapter
@@ -72,7 +69,7 @@ class PokemonListFragment : Fragment() {
                     pokemonsAdapter.retry()
                 }
             )
-        }
+
 
 /*        lifecycleScope.launch {
             viewModel.uiState.observe(viewLifecycleOwner) {
