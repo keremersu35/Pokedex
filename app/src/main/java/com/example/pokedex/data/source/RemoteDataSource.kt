@@ -10,42 +10,19 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-/*
-class RemoteDataSource @Inject constructor(private val api: PokemonApi) : PagingSource<Int, Response<>>() {
-    override suspend fun getTopAnimeCharacters(): NetworkResponseState<TopAnimeCharacterResponse> {
-        return try {
-            val response = api.getTopCharacters()
-            NetworkResponseState.Success(response)
-        } catch (e: Exception) {
-            NetworkResponseState.Error(e)
-        }
-    }
-
-    override suspend fun getSingleCharacter(id: String): NetworkResponseState<SingleCharacterResponse> {
-        return try {
-            val response = api.getSingleCharacterFull(id)
-            NetworkResponseState.Success(response)
-        } catch (e: Exception) {
-            NetworkResponseState.Error(e)
-        }
-    }
-}*/
-
 private const val TMDB_STARTING_PAGE_INDEX = 1
 
-
 class RemotePagingSource(
-    private val service: PokemonApi
+    private val repository: PokemonRepository
 ) : PagingSource<Int, Result>() {
-
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
         val pageIndex = params.key ?: TMDB_STARTING_PAGE_INDEX
         return try {
-            val response = service.getPokemonList(
+            val response = repository.getPokemonList(
                 offset = pageIndex
             )
-            val data = response.body()?.results ?: emptyList()
+            val data = response.data?.results ?: emptyList()
             val nextKey =
                 if (data.isEmpty()) {
                     null

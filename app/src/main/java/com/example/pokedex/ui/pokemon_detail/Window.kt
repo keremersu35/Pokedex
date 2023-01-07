@@ -1,23 +1,29 @@
-/*
-package com.example.pokedex.ui.pokemon_detail*/
-
 package com.example.pokedex.ui.pokemon_detail
+
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import com.example.pokedex.R
 import android.view.*
-import android.widget.Button
+import android.view.ViewGroup.LayoutParams
 import android.widget.ImageView
 import android.widget.TextView
-import coil.load
+import com.example.pokedex.R
+import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.model.PokemonDetail
+import java.net.URL
+import java.util.concurrent.Executors
+
 
 class Window(  // declaring required variables
     private val context: Context,
     private val pokemon : PokemonDetail
 ) {
+    var oldPokemon = 0
     private val mView: View
     private var mParams: WindowManager.LayoutParams? = null
     private val mWindowManager: WindowManager
@@ -35,6 +41,8 @@ class Window(  // declaring required variables
                 // through any transparent parts
                 PixelFormat.TRANSLUCENT
             )
+            mParams!!.width = LayoutParams.WRAP_CONTENT
+            mParams!!.height = LayoutParams.WRAP_CONTENT
         }
         // getting a LayoutInflater
         layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -43,10 +51,24 @@ class Window(  // declaring required variables
         // set onClickListener on the remove button, which removes
         // the view from the window
         mView.findViewById<View>(R.id.overlay_close).setOnClickListener { close() }
-        mView.findViewById<TextView>(R.id.overlay_height).text = pokemon.height.toString()
         mView.findViewById<TextView>(R.id.overlay_weight).text = pokemon.weight.toString()
-        mView.findViewById<ImageView>(R.id.overlay_image).load(pokemon.getImage())
+        val executor = Executors.newSingleThreadExecutor()
+        val handler = Handler(Looper.getMainLooper())
+        var image: Bitmap? = null
+        // Only for Background process (can take time depending on the Internet speed)
+        executor.execute {
+            try {
+                val `in` = URL(pokemon.getImage()).openStream()
+                image = BitmapFactory.decodeStream(`in`)
+                handler.post {
+                    mView.findViewById<ImageView>(R.id.overlay_image).setImageBitmap(image)
+                }
+            }
+            catch (e: Exception) { e.printStackTrace() }
+        }
+        //Glide.with(context).load(pokemon.getImage()).into(mView.findViewById<ImageView>(R.id.overlay_image));
         mView.findViewById<TextView>(R.id.overlay_name).text = pokemon.name
+        mView.findViewById<TextView>(R.id.overlay_hei).text = pokemon.height.toString()
         // Define the position of the
         // window within the screen
         mParams!!.gravity = Gravity.CENTER
@@ -59,7 +81,13 @@ class Window(  // declaring required variables
             // inflated or present in the window
             if (mView.windowToken == null) {
                 if (mView.parent == null) {
-                    mWindowManager.addView(mView, mParams)
+
+                    if(oldPokemon != 0){
+                        mWindowManager.updateViewLayout(mView, mParams)
+                    } else{
+                        mWindowManager.addView(mView, mParams)
+                        oldPokemon = 1
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -67,7 +95,7 @@ class Window(  // declaring required variables
         }
     }
 
-    fun close() {
+    private fun close() {
         try {
             // remove the view from the window
             (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).removeView(mView)
@@ -83,6 +111,4 @@ class Window(  // declaring required variables
         }
     }
 }
-/*
 
-*/

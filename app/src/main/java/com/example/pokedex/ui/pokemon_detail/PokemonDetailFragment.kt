@@ -15,6 +15,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonDetailBinding
+import com.example.pokedex.utils.Resource
 import kotlinx.coroutines.launch
 
 class PokemonDetailFragment : Fragment() {
@@ -22,7 +23,6 @@ class PokemonDetailFragment : Fragment() {
     private var _binding: FragmentPokemonDetailBinding? = null
     private val binding get() = _binding!!
     private var pokemonId = 0
-    private var isWindowState = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +44,7 @@ class PokemonDetailFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.getPokemonDetail(pokemonId)
             viewModel.uiState.observe(viewLifecycleOwner) {
+                println( it.message)
                 val pokemon = it
 
                 binding.pokemon = pokemon.data
@@ -52,43 +53,18 @@ class PokemonDetailFragment : Fragment() {
                     placeholder(R.drawable.pokeball)
                     transformations(CircleCropTransformation())
                 }
+
                 binding.overlayButton.setOnClickListener {
                     checkOverlayPermission()
                     val window = Window(requireActivity(), pokemon.data!!)
-                    if(isWindowState) {
-                        window.open()
-                        binding.overlayButton.text = "Kapat"
-                        isWindowState = !isWindowState
-                    }else{
-                        window.close()
-                        isWindowState = !isWindowState
-                    }
+                    window.open()
                 }
             }
-        }
-    }
-
-    private fun startService(intent: Intent) {
-        val intent = Intent(requireActivity(), ForegroundService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // check if the user has already granted
-            // the Draw over other apps permission
-            if (Settings.canDrawOverlays(requireActivity())) {
-                // start the service based on the android version
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    ContextCompat.startForegroundService(requireActivity(), intent)
-                } else {
-                    startService(intent)
-                }
-            }
-        } else {
-            startService(intent)
         }
     }
 
     // method to ask user to grant the Overlay permission
     private fun checkOverlayPermission() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(requireActivity())) {
                 // send user to the device settings

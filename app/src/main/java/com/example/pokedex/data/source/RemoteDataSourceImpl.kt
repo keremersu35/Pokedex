@@ -1,3 +1,4 @@
+/*
 package com.example.pokedex.data.source
 
 import androidx.paging.Pager
@@ -20,8 +21,8 @@ internal class Pokemons(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                RemotePagingSource(service = pokemonApi)
+                RemotePagingSource(repository = pokemonApi)
             }
         ).flow
     }
-}
+}*/

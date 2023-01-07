@@ -2,16 +2,21 @@ package com.example.pokedex.ui.pokemon_list.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.pokedex.R
 import com.example.pokedex.databinding.ItemPokemonsRvBinding
+import com.example.pokedex.domain.model.Pokemon
+import com.example.pokedex.domain.model.PokemonDetail
 import com.example.pokedex.domain.model.Result
+import javax.inject.Inject
 
 
-class PokemonListAdapter(private val pokemonList: List<Result>) :
-    RecyclerView.Adapter<PokemonViewHolder>() {
+class PokemonListAdapter @Inject constructor() :
+    PagingDataAdapter<Result, PokemonViewHolder>(differCallback) {
 
     private lateinit var binding: ItemPokemonsRvBinding
 
@@ -20,15 +25,25 @@ class PokemonListAdapter(private val pokemonList: List<Result>) :
         return PokemonViewHolder(binding)
     }
 
-    override fun getItemCount() = pokemonList.size
-
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
-        val pokemon = pokemonList[position]
+        var pokemon = getItem(position)!!
+        holder.setIsRecyclable(false)
         holder.bind(pokemon)
         binding.pokemonImage.load(pokemon.getImageUrl()){
             crossfade(true)
             placeholder(R.drawable.loading)
             transformations(CircleCropTransformation())
+        }
+    }
+    companion object {
+        val differCallback = object : DiffUtil.ItemCallback<Result>() {
+            override fun areItemsTheSame(oldItem: Result, newItem: Result): Boolean {
+                return oldItem.getPokemonId() == oldItem.getPokemonId()
+            }
+
+            override fun areContentsTheSame(oldItem: Result, newItem: Result): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 }

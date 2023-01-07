@@ -4,6 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.example.pokedex.data.source.RemotePagingSource
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.repository.PokemonRepository
 import com.example.pokedex.utils.Resource
@@ -22,15 +26,20 @@ class PokemonListViewModel @Inject constructor(
 /*
     private val _uiState = MutableStateFlow<Resource<PokemonDetail>>()
     val uiState: StateFlow<Resource<PokemonDetail>> = _uiState.asStateFlow()*/
+    val loading = MutableLiveData<Boolean>()
+
+    val pokemonList = Pager(PagingConfig(1)) {
+        RemotePagingSource(getPokemonDetailUseCase)
+    }.flow.cachedIn(viewModelScope)
 
     private val _uiState = MutableLiveData<Resource<Pokemon>>()
     val uiState: LiveData<Resource<Pokemon>> = _uiState
 
-    init {
+/*    init {
         viewModelScope.launch{
             getPokemonList()
         }
-    }
+    }*/
 
 /*     suspend fun getPokemonDetail(id: Int){
         val pokemon = getPokemonDetailUseCase.getPokemonDetail(id)
@@ -38,8 +47,8 @@ class PokemonListViewModel @Inject constructor(
          _uiState. { it.copy(pokemonDetail = pokemon.data) }
     }*/
 
-    private suspend  fun getPokemonList() = viewModelScope.launch {
+/*    private suspend  fun getPokemonList() = viewModelScope.launch {
         _uiState.postValue(Resource.Loading())
         _uiState.postValue(getPokemonDetailUseCase.getPokemonList(1 * 20))
-    }
+    }*/
 }
