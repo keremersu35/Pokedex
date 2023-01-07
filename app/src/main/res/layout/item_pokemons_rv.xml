@@ -35,7 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textFontWeight="@integer/material_motion_duration_long_2"
+                android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="24sp"/>
 
         </LinearLayout>

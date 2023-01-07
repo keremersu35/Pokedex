@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="Pokemon Adı: "
+            android:text="@string/label_pokemon_name"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pokemon boyu: "
+            android:text="@string/label_pokemon_height"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="Pokemon Ağırlığı: "
+            android:text="@string/label_pokemon_weight"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -87,7 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/overlay_close"
-        android:text="kapat"
+        android:text="@string/label_close"
         app:backgroundTint="@android:color/holo_purple"/>
 
 </LinearLayout>

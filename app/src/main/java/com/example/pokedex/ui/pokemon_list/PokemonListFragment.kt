@@ -20,7 +20,6 @@ class PokemonListFragment : Fragment() {
 
     private var _binding: FragmentPokemonListBinding? = null
     private val binding get() = _binding!!
-
     var pokemonsAdapter = PokemonListAdapter()
 
     override fun onCreateView(
@@ -36,45 +35,28 @@ class PokemonListFragment : Fragment() {
 
         val viewModel = ViewModelProvider(requireActivity())[PokemonListViewModel::class.java]
 
-/*        lifecycleScope.launchWhenCreated {
-            viewModel.pokemonList.collect {
-                binding.pokemonRv.adapter = PokemonListAdapter(it ?: emptyList())
-            }
-        }*/
         lifecycleScope.launchWhenCreated {
             viewModel.pokemonList.collect {
                 pokemonsAdapter.submitData(lifecycle, it)
             }
         }
 
-/*        moviesAdapter.setOnItemClickListener {
-            val direction = MoviesFragmentDirections.actionMoviesFragmentToMovieDetailsFragment(it.id)
-            findNavController().navigate(direction)
-        }*/
-
-            lifecycleScope.launchWhenCreated {
-                pokemonsAdapter.loadStateFlow.collect {
-                    val state = it.refresh
-                    binding.prgBarMovies.isVisible = state is LoadState.Loading
-                }
+        lifecycleScope.launchWhenCreated {
+            pokemonsAdapter.loadStateFlow.collect {
+                val state = it.refresh
+                binding.prgBarMovies.isVisible = state is LoadState.Loading
             }
+        }
 
-            binding.pokemonRv.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = pokemonsAdapter
+        binding.pokemonRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = pokemonsAdapter
+        }
+
+        binding.pokemonRv.adapter = pokemonsAdapter.withLoadStateFooter(
+            LoadMoreAdapter {
+                pokemonsAdapter.retry()
             }
-
-            binding.pokemonRv.adapter = pokemonsAdapter.withLoadStateFooter(
-                LoadMoreAdapter {
-                    pokemonsAdapter.retry()
-                }
-            )
-
-
-/*        lifecycleScope.launch {
-            viewModel.uiState.observe(viewLifecycleOwner) {
-                binding.pokemonRv.adapter = PokemonListAdapter(it.data?.results ?: emptyList())
-            }
-        }*/
+        )
     }
 }

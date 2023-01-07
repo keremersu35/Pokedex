@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pokedex</string>
+    <string name="label_error_network">Lütfen internet bağlantınızı kontrol ediniz</string>
+    <string name="label_error_went_wrong">Bir şeyler ters gitti</string>
+    <string name="label_get_overlay_permission">Overlay İzni Alın</string>
+    <string name="label_pokemon_name">Pokemon Adı: </string>
+    <string name="label_pokemon_height">Pokemon Boyu: </string>
+    <string name="label_pokemon_weight">Pokemon Ağırlığı: </string>
+    <string name="label_overlay_mode">Overlay Modu</string>
+    <string name="label_close">Kapat</string>
+    <string name="label_please_try_again">Oppps! Lütfen Tekrar Deneyin!</string>
+    <string name="label_retry">Tekrar Dene</string>
+
+</resources>

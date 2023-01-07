@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">Pokedex</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_error_network">Please check your network connection</string>
+    <string name="label_error_went_wrong">Something went wrong</string>
+    <string name="label_get_overlay_permission">Get Overlay Permission</string>
+    <string name="label_pokemon_name">Pokemon Name: </string>
+    <string name="label_pokemon_height">Pokemon Height: </string>
+    <string name="label_pokemon_weight">Pokemon Weight: </string>
+    <string name="label_overlay_mode">Overlay Mode</string>
+    <string name="label_close">Close</string>
+    <string name="label_please_try_again">Oppps! Please Try Again!</string>
+    <string name="label_retry">Retry</string>
+
 </resources>

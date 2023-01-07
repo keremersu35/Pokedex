@@ -2,7 +2,7 @@ package com.example.pokedex.data.remote
 
 import com.example.pokedex.domain.model.Pokemon
 import com.example.pokedex.domain.model.PokemonDetail
-import com.example.pokedex.utils.Resource
+import com.example.pokedex.utils.Constants
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -10,12 +10,11 @@ import retrofit2.http.Query
 
 interface PokemonApi {
 
-    @GET("pokemon")
+    @GET(Constants.POKEMON)
     suspend fun getPokemonList(
-        @Query("offset") offset: Int = 20,
-        @Query("limit") limit: Int = 20
+        @Query(Constants.OFFSET) offset: Int,
         ): Response<Pokemon>
 
-    @GET("pokemon/{id}")
-    suspend fun getPokemonDetail(@Path("id") id: Int): Response<PokemonDetail>
+    @GET(Constants.POKEMON_DETAIL)
+    suspend fun getPokemonDetail(@Path(Constants.ID) id: Int): Response<PokemonDetail>
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/pokemonListFragment">
+    app:startDestination="@id/permissionFragment">
 
     <fragment
         android:id="@+id/pokemonListFragment"
@@ -30,5 +30,14 @@
             android:name="pokemonId"
             app:argType="integer"
             android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/permissionFragment"
+        android:name="com.example.pokedex.ui.permission.PermissionFragment"
+        android:label="fragment_permission"
+        tools:layout="@layout/fragment_permission" >
+        <action
+            android:id="@+id/action_permissionFragment_to_pokemonListFragment"
+            app:destination="@id/pokemonListFragment" />
     </fragment>
 </navigation>
