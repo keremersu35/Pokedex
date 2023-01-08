@@ -16,7 +16,7 @@ class RemotePagingSource(
         val currentPage = params.key ?: STARTING_PAGE_INDEX
         return try {
             val response = repository.getPokemonList(
-                offset = (currentPage * 20)
+                offset = currentPage
             )
             val data = response.data?.results ?: emptyList()
             val nextKey =

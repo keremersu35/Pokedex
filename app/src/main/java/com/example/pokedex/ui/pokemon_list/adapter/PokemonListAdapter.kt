@@ -4,15 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import coil.transform.CircleCropTransformation
-import com.example.pokedex.R
 import com.example.pokedex.databinding.ItemPokemonsRvBinding
-import com.example.pokedex.domain.model.Pokemon
-import com.example.pokedex.domain.model.PokemonDetail
 import com.example.pokedex.domain.model.Result
-import javax.inject.Inject
 
 class PokemonListAdapter :
     PagingDataAdapter<Result, PokemonViewHolder>(differCallback) {
@@ -25,7 +18,7 @@ class PokemonListAdapter :
     }
 
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
-        var pokemon = getItem(position)!!
+        val pokemon = getItem(position)!!
         holder.bind(pokemon)
     }
     companion object {

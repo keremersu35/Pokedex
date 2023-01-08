@@ -10,5 +10,6 @@
     <string name="label_close">Close</string>
     <string name="label_please_try_again">Oppps! Please Try Again!</string>
     <string name="label_retry">Retry</string>
+    <string name="label_no_internet_connection">No Internet Connection has Found.\nPlease Check Your Internet Connection.</string>
 
 </resources>

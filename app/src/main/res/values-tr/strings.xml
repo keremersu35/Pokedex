@@ -11,5 +11,6 @@
     <string name="label_close">Kapat</string>
     <string name="label_please_try_again">Oppps! Lütfen Tekrar Deneyin!</string>
     <string name="label_retry">Tekrar Dene</string>
+    <string name="label_no_internet_connection">Internet Bağlantısı Bulunamadı.\nLütfen Internet Bağlantınızı Kontrol Edin.</string>
 
 </resources>

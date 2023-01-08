@@ -1,5 +1,6 @@
 package com.example.pokedex.ui.pokemon_list
 
+import android.content.ClipData.Item
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,22 +11,26 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.example.pokedex.databinding.FragmentPokemonListBinding
 import com.example.pokedex.ui.pokemon_list.adapter.LoadMoreAdapter
 import com.example.pokedex.ui.pokemon_list.adapter.PokemonListAdapter
+import com.example.pokedex.utils.NetworkManager
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class PokemonListFragment : Fragment() {
 
     private var _binding: FragmentPokemonListBinding? = null
     private val binding get() = _binding!!
-    var pokemonsAdapter = PokemonListAdapter()
+    private var pokemonsAdapter = PokemonListAdapter()
+    private lateinit var state: LoadState
+    private val networkManager = NetworkManager()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPokemonListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,7 +48,7 @@ class PokemonListFragment : Fragment() {
 
         lifecycleScope.launchWhenCreated {
             pokemonsAdapter.loadStateFlow.collect {
-                val state = it.refresh
+                state = it.refresh
                 binding.prgBarMovies.isVisible = state is LoadState.Loading
             }
         }
@@ -58,5 +63,22 @@ class PokemonListFragment : Fragment() {
                 pokemonsAdapter.retry()
             }
         )
+
+        networkManager.networkStateManager(
+            context = requireContext(),
+            onLost = { lifecycleScope.launch{ disconnected() }},
+            onAvailable = { lifecycleScope.launch{ connected() }}
+        )
+    }
+
+    private fun disconnected() {
+        binding.pokemonRv.visibility = View.INVISIBLE
+        binding.noInternetConnectionLayoutPokemonList.visibility = View.VISIBLE
+    }
+
+    private fun connected() {
+        binding.prgBarMovies.isVisible = state is LoadState.Loading
+        binding.pokemonRv.visibility = View.VISIBLE
+        binding.noInternetConnectionLayoutPokemonList.visibility = View.GONE
     }
 }

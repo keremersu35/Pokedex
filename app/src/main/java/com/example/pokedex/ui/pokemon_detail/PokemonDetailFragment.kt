@@ -11,6 +11,7 @@ import coil.load
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonDetailBinding
 import com.example.pokedex.utils.Constants
+import com.example.pokedex.utils.NetworkManager
 import kotlinx.coroutines.launch
 
 class PokemonDetailFragment : Fragment() {
@@ -19,6 +20,7 @@ class PokemonDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private var pokemonId = 0
     private lateinit var viewModel : PokemonDetailViewModel
+    private val networkManager = NetworkManager()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +53,11 @@ class PokemonDetailFragment : Fragment() {
             }
         }
 
+        networkManager.networkStateManager(
+            context = requireContext(),
+            onAvailable = { lifecycleScope.launch { connected() }},
+            onLost = { lifecycleScope.launch { disconnected() }})
+
         viewModel.pokemonDetail.observe(viewLifecycleOwner) { pokemon ->
             binding.pokemonDetailImage.load(pokemon.getImage()) {
                 crossfade(true)
@@ -62,6 +69,15 @@ class PokemonDetailFragment : Fragment() {
                 window.open()
             }
         }
+    }
+    private fun connected() {
+        binding.linear.visibility = View.VISIBLE
+        binding.noInternetConnectionLayoutPokemonDetail.visibility = View.GONE
+    }
+
+    private fun disconnected() {
+        binding.linear.visibility = View.INVISIBLE
+        binding.noInternetConnectionLayoutPokemonDetail.visibility = View.VISIBLE
     }
 }
 

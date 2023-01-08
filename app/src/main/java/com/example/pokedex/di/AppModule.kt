@@ -7,19 +7,17 @@ import com.example.pokedex.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun providePokemonApi(): PokemonApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -29,7 +27,7 @@ object AppModule {
     }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun providePokemonRepository(api: PokemonApi): PokemonRepository {
         return PokemonRepositoryImpl(api)
     }
