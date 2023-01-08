@@ -101,7 +101,6 @@ class Window(  // declaring required variables
             (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).removeView(mView)
             // invalidate the view
             mView.invalidate()
-            Constants.temp = 0
             // remove all views
             (mView.parent as ViewGroup).removeAllViews()
 

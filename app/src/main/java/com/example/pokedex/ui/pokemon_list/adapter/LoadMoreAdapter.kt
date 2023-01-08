@@ -32,6 +32,9 @@ class LoadMoreAdapter(private val retry: () -> Unit) : LoadStateAdapter<LoadMore
                 prgBarLoadMore.isVisible = state is LoadState.Loading
                 tvLoadMore.isVisible = state is LoadState.Error
                 btnLoadMoreRetry.isVisible = state is LoadState.Error
+/*                prgBarLoadMore.isVisible = true
+                tvLoadMore.isVisible = true
+                btnLoadMoreRetry.isVisible = true*/
             }
         }
     }

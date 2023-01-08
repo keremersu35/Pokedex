@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 class NetworkManager {
 
     private val networkRequest: NetworkRequest = NetworkRequest.Builder()
-        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
         .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
         .build()
@@ -18,13 +17,19 @@ class NetworkManager {
     fun networkStateManager(
         context: Context,
         onLost: () -> Unit = {},
-        onAvailable: () -> Unit = {}
+        onAvailable: () -> Unit = {},
+        onUnAvailable: () -> Unit = {}
     ){
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             // network is available for use
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 onAvailable()
+            }
+
+            override fun onUnavailable() {
+                super.onUnavailable()
+                onUnAvailable()
             }
 
             // lost network connection

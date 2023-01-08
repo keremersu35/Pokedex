@@ -1,5 +1,6 @@
 package com.example.pokedex.base
 
+import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Resource
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,7 @@ abstract class BaseRepository() {
             } catch (e: HttpException) {
                 Resource.Error(errorMessage = e.message ?: "Something went wrong")
             } catch (e: IOException) {
+                Constants.hasInternet = false
                 Resource.Error("Please check your network connection")
             } catch (e: Exception) {
                 Resource.Error(errorMessage = "Something went wrong")

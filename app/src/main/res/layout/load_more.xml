@@ -4,42 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <com.google.android.material.progressindicator.CircularProgressIndicator
+
+    <ProgressBar
         android:id="@+id/prgBarLoadMore"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginTop="5dp"
-        android:backgroundTint="@color/black"
+        android:indeterminateTint="@color/black"
         android:padding="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvLoadMore"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvLoadMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/label_please_try_again"
         android:textColor="@color/black"
         android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLoadMoreRetry"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/prgBarLoadMore" />
+        app:layout_constraintTop_toBottomOf="@+id/prgBarLoadMore" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLoadMoreRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="22dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/label_retry"
         android:textAllCaps="false"
         android:textSize="14sp"
         app:cornerRadius="10dp"
         app:drawableTint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvLoadMore" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvLoadMore"
+        app:layout_constraintTop_toBottomOf="@+id/tvLoadMore" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
