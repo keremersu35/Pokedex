@@ -4,14 +4,16 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPermissionBinding
+
 
 class PermissionFragment : Fragment() {
 
@@ -49,8 +51,14 @@ class PermissionFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+    }
+
     override fun onResume() {
         super.onResume()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         checkDrawOverlayPermission()
     }
 }

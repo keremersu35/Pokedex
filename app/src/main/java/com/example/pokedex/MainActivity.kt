@@ -2,7 +2,6 @@ package com.example.pokedex
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -35,20 +34,6 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-
-            override fun handleOnBackPressed() {
-                navController.currentDestination?.let { navDestination ->
-
-                    if (R.id.pokemonListFragment == navDestination.id) {
-                        finish()
-                    } else {
-                        navController.popBackStack()
-                    }
-                }
-            }
-        })
 
         binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
