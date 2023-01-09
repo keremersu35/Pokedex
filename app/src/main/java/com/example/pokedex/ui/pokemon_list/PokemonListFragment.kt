@@ -1,30 +1,23 @@
 package com.example.pokedex.ui.pokemon_list
 
-import android.annotation.SuppressLint
-import android.content.ClipData.Item
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonListBinding
+import com.example.pokedex.network.NetworkManager
 import com.example.pokedex.ui.pokemon_list.adapter.LoadMoreAdapter
 import com.example.pokedex.ui.pokemon_list.adapter.PokemonListAdapter
-import com.example.pokedex.utils.Constants
-import com.example.pokedex.utils.NetworkManager
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PokemonListFragment : Fragment() {
@@ -33,7 +26,8 @@ class PokemonListFragment : Fragment() {
     private val binding get() = _binding!!
     private var pokemonsAdapter = PokemonListAdapter()
     private val networkManager = NetworkManager()
-    lateinit var viewModel: PokemonListViewModel
+    private lateinit var viewModel: PokemonListViewModel
+    private var hasInternet = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +39,7 @@ class PokemonListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        checkDrawOverlayPermission()
         viewModel = ViewModelProvider(requireActivity())[PokemonListViewModel::class.java]
 
         lifecycleScope.launchWhenCreated {
@@ -53,18 +47,13 @@ class PokemonListFragment : Fragment() {
                 pokemonsAdapter.submitData(lifecycle, it)
             }
         }
+        hasInternet = networkManager.isNetworkAvailable(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (Constants.hasInternet) connected()
-        else disconnected()
-
-        networkManager.networkStateManager(
-            context = requireContext(),
-            onAvailable = { lifecycleScope.launch { reconnected() } }
-        )
+        if (!hasInternet) disconnected()
 
         lifecycleScope.launchWhenCreated {
             pokemonsAdapter.loadStateFlow.collect {
@@ -83,6 +72,13 @@ class PokemonListFragment : Fragment() {
                 pokemonsAdapter.retry()
             }
         )
+
+
+        networkManager.networkStateManager(requireContext(),
+            onLost = { },
+            onAvailable = {
+                pokemonsAdapter.retry(); lifecycleScope.launch { connected() } })
+
     }
 
     private fun disconnected() {
@@ -90,21 +86,37 @@ class PokemonListFragment : Fragment() {
         binding.noInternetConnectionLayoutPokemonList.visibility = View.VISIBLE
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun reconnected() {
-        lifecycleScope.launchWhenCreated {
-            viewModel.pokemonList.collect {
-                pokemonsAdapter.submitData(lifecycle, it)
-            }
-        }
-        pokemonsAdapter.notifyDataSetChanged()
+    private fun connected() {
         binding.pokemonRv.visibility = View.VISIBLE
         binding.noInternetConnectionLayoutPokemonList.visibility = View.GONE
     }
 
-    private fun connected() {
-        binding.pokemonRv.visibility = View.VISIBLE
-        binding.noInternetConnectionLayoutPokemonList.visibility = View.GONE
+    override fun onStart() {
+        super.onStart()
+
+        networkManager.networkStateManager(requireContext(),
+            onLost = { },
+            onAvailable = { pokemonsAdapter.retry(); lifecycleScope.launch { connected() } })
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkDrawOverlayPermission()
+
+        networkManager.networkStateManager(requireContext(),
+            onLost = { },
+            onAvailable = { pokemonsAdapter.retry(); lifecycleScope.launch { connected() } })
+    }
+
+    private fun checkDrawOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(context)) {
+                if (!Settings.canDrawOverlays(requireActivity()))
+                    Navigation.findNavController(requireView())
+                        .navigate(R.id.action_pokemonListFragment_to_permissionFragment)
+            }
+        }
     }
 }
 

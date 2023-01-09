@@ -8,5 +8,4 @@ object Constants {
     const val OFFSET = "offset"
     const val ID = "id"
     const val POKEMON_ID = "pokemonId"
-    var hasInternet = true
 }

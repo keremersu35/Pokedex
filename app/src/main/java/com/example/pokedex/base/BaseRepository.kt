@@ -1,6 +1,5 @@
 package com.example.pokedex.base
 
-import com.example.pokedex.utils.Constants
 import com.example.pokedex.utils.Resource
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +9,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-abstract class BaseRepository() {
+abstract class BaseRepository {
 
     suspend fun <T> safeApiCall(apiToBeCalled: suspend () -> Response<T>): Resource<T> {
 
@@ -30,7 +29,6 @@ abstract class BaseRepository() {
             } catch (e: HttpException) {
                 Resource.Error(errorMessage = e.message ?: "Something went wrong")
             } catch (e: IOException) {
-                Constants.hasInternet = false
                 Resource.Error("Please check your network connection")
             } catch (e: Exception) {
                 Resource.Error(errorMessage = "Something went wrong")

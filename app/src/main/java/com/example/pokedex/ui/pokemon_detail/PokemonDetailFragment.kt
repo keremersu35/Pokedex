@@ -1,17 +1,21 @@
 package com.example.pokedex.ui.pokemon_detail
 
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import coil.load
 import com.example.pokedex.R
 import com.example.pokedex.databinding.FragmentPokemonDetailBinding
+import com.example.pokedex.network.NetworkManager
 import com.example.pokedex.utils.Constants
-import com.example.pokedex.utils.NetworkManager
 import kotlinx.coroutines.launch
 
 class PokemonDetailFragment : Fragment() {
@@ -19,44 +23,45 @@ class PokemonDetailFragment : Fragment() {
     private var _binding: FragmentPokemonDetailBinding? = null
     private val binding get() = _binding!!
     private var pokemonId = 0
-    private lateinit var viewModel : PokemonDetailViewModel
+    private lateinit var viewModel: PokemonDetailViewModel
     private val networkManager = NetworkManager()
+    private var hasInternet = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        checkDrawOverlayPermission()
         _binding = FragmentPokemonDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         pokemonId = arguments?.getInt(Constants.POKEMON_ID) ?: 0
         viewModel = ViewModelProvider(requireActivity())[PokemonDetailViewModel::class.java]
         if (pokemonId > 0) {
-            lifecycleScope.launch{
-                viewModel.getPokemonDetail(pokemonId)
-            }
+            lifecycleScope.launch { viewModel.getPokemonDetail(pokemonId) }
         }
+        hasInternet = networkManager.isNetworkAvailable(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loading.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.detailProgressBar.visibility = View.VISIBLE
-            } else {
-                binding.detailProgressBar.visibility = View.INVISIBLE
-                binding.linear.visibility = View.VISIBLE
+        if(hasInternet) {
+            viewModel.loading.observe(viewLifecycleOwner) {
+                binding.apply {
+                    if (it) {
+                        detailProgressBar.visibility = View.VISIBLE
+                    } else {
+                        detailProgressBar.visibility = View.INVISIBLE
+                        linear.visibility = View.VISIBLE
+                    }
+                }
             }
         }
-
-        networkManager.networkStateManager(
-            context = requireContext(),
-            onAvailable = { lifecycleScope.launch { connected() }},
-            onLost = { lifecycleScope.launch { disconnected() }})
 
         viewModel.pokemonDetail.observe(viewLifecycleOwner) { pokemon ->
             binding.pokemonDetailImage.load(pokemon.getImage()) {
@@ -69,18 +74,30 @@ class PokemonDetailFragment : Fragment() {
                 window.open()
             }
         }
-    }
-    private fun connected() {
-        binding.linear.visibility = View.VISIBLE
-        binding.noInternetConnectionLayoutPokemonDetail.visibility = View.GONE
+
+        if (!hasInternet) disconnected()
     }
 
     private fun disconnected() {
-        binding.linear.visibility = View.INVISIBLE
-        binding.noInternetConnectionLayoutPokemonDetail.visibility = View.VISIBLE
+        binding.apply {
+            linear.isVisible = false
+            noInternetConnectionLayoutPokemonDetail.visibility = View.VISIBLE
+            detailProgressBar.isVisible = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkDrawOverlayPermission()
+    }
+
+    private fun checkDrawOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(context)) {
+                if (!Settings.canDrawOverlays(requireActivity()))
+                    Navigation.findNavController(requireView())
+                        .navigate(R.id.action_pokemonDetailFragment_to_permissionFragment)
+            }
+        }
     }
 }
-
-
-
-

@@ -13,18 +13,20 @@ class PokemonViewHolder(
     private val binding: ItemPokemonsRvBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(pokemon: Result) {
-        binding.root.setOnClickListener { view ->
-            Navigation.findNavController(view)
-                .navigate(
-                    R.id.action_pokemonListFragment_to_pokemonDetailFragment,
-                    bundleOf("pokemonId" to pokemon.getPokemonId())
-            )
-        }
-        binding.pokemon = pokemon
-        binding.pokemonImage.load(pokemon.getImageUrl()){
-            crossfade(true)
-            placeholder(R.drawable.loading)
-            transformations(CircleCropTransformation())
+        binding.apply {
+            root.setOnClickListener { view ->
+                Navigation.findNavController(view)
+                    .navigate(
+                        R.id.action_pokemonListFragment_to_pokemonDetailFragment,
+                        bundleOf("pokemonId" to pokemon.getPokemonId())
+                    )
+            }
+            binding.pokemon = pokemon
+            pokemonImage.load(pokemon.getImageUrl()) {
+                crossfade(true)
+                placeholder(R.drawable.loading)
+                transformations(CircleCropTransformation())
+            }
         }
     }
 }
